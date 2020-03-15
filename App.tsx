@@ -56,11 +56,11 @@ function DetailsScreen({
       </Text>
       <Button
         title="Go to Details... again"
-        onPress={() =>
+        onPress={() => {
           navigation.push("Details", {
             itemId: Math.floor(Math.random() * 100)
-          })
-        }
+          });
+        }}
       />
       <Button title="Go back" onPress={() => navigation.goBack()} />
       <Button
