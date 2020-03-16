@@ -5,14 +5,12 @@ import {
   StackNavigationProp,
   createStackNavigator
 } from "@react-navigation/stack";
-import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Button, Text, View } from "react-native";
 
 type RootStackParamList = {
   Home: {};
-  Profile: {};
-  Settings: {};
-  Root: {};
+  MyModal: {};
+  Details: {};
 };
 
 interface ScreenProps<RouteName extends keyof RootStackParamList> {
@@ -20,73 +18,58 @@ interface ScreenProps<RouteName extends keyof RootStackParamList> {
   route: RouteProp<RootStackParamList, RouteName>;
 }
 
-function ProfileScreen({ navigation }: ScreenProps<"Profile">) {
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Profile screen</Text>
-      <Button title="Go back" onPress={() => navigation.goBack()} />
-    </View>
-  );
-}
-
-function SettingsScreen({ navigation }: ScreenProps<"Settings">) {
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Settings screen</Text>
-      <Button title="Go back" onPress={() => navigation.goBack()} />
-      <Button
-        title="Go Home"
-        onPress={() => {
-          navigation.navigate("Home");
-        }}
-      />
-    </View>
-  );
-}
-
 function HomeScreen({ navigation }: ScreenProps<"Home">) {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Home screen</Text>
+      <Text style={{ fontSize: 30 }}>This is the home screen!</Text>
       <Button
-        title="Go to Profile"
-        onPress={() => {
-          navigation.navigate("Root", {
-            screen: "Profile"
-          });
-        }}
+        onPress={() => navigation.navigate("MyModal")}
+        title="Open Modal"
       />
       <Button
-        title="Go to Settings"
-        onPress={() => {
-          navigation.navigate("Root", {
-            screen: "Settings"
-          });
-        }}
+        onPress={() => navigation.navigate("Details")}
+        title="Go to Details"
       />
     </View>
   );
 }
 
-const Drawer = createDrawerNavigator();
-const Stack = createStackNavigator<RootStackParamList>();
-
-function Root() {
+function ModalScreen({ navigation }: ScreenProps<"Home">) {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Profile" component={ProfileScreen} />
-      <Stack.Screen name="Settings" component={SettingsScreen} />
-    </Stack.Navigator>
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Text style={{ fontSize: 30 }}>This is a modal!</Text>
+      <Button onPress={() => navigation.goBack()} title="Dismiss" />
+    </View>
+  );
+}
+
+function DetailsScreen() {
+  return (
+    <View>
+      <Text>Details</Text>
+    </View>
+  );
+}
+
+const MainStack = createStackNavigator();
+const RootStack = createStackNavigator();
+
+function MainStackScreen() {
+  return (
+    <MainStack.Navigator>
+      <MainStack.Screen name="Home" component={HomeScreen} />
+      <MainStack.Screen name="Details" component={DetailsScreen} />
+    </MainStack.Navigator>
   );
 }
 
 function App() {
   return (
     <NavigationContainer>
-      <Drawer.Navigator>
-        <Drawer.Screen name="Home" component={HomeScreen} />
-        <Drawer.Screen name="Root" component={Root} />
-      </Drawer.Navigator>
+      <RootStack.Navigator mode="modal" headerMode="none">
+        <RootStack.Screen name="Main" component={MainStackScreen} />
+        <RootStack.Screen name="MyModal" component={ModalScreen} />
+      </RootStack.Navigator>
     </NavigationContainer>
   );
 }
