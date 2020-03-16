@@ -41,7 +41,10 @@ function App() {
 
   return (
     <View style={{ flex: 1 }}>
-      <NavigationContainer ref={ref}>
+      <NavigationContainer
+        ref={ref}
+        onStateChange={state => console.log("New state is", state)}
+      >
         <Stack.Navigator initialRouteName="Details">
           <Stack.Screen name="Details" component={DetailsScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
