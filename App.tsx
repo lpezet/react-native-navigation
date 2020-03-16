@@ -5,14 +5,17 @@ import {
   StackNavigationProp,
   createStackNavigator
 } from "@react-navigation/stack";
-import { Button, Text, View } from "react-native";
+import { Button, Text, TextInput, View } from "react-native";
 
 type RootStackParamList = {
-  Home: {};
+  Home: {
+    post?: string;
+  };
   Details: {
     itemId: number;
     otherParam?: string;
   };
+  CreatePost: {};
 };
 
 interface ScreenProps<RouteName extends keyof RootStackParamList> {
@@ -20,10 +23,47 @@ interface ScreenProps<RouteName extends keyof RootStackParamList> {
   route: RouteProp<RootStackParamList, RouteName>;
 }
 
-function HomeScreen({ navigation }: ScreenProps<"Home">) {
+function CreatePostScreen({ navigation }: ScreenProps<"CreatePost">) {
+  const [postText, setPostText] = React.useState("");
+
+  return (
+    <>
+      <TextInput
+        multiline
+        placeholder="What's on your mind?"
+        style={{ height: 200, padding: 10, backgroundColor: "white" }}
+        value={postText}
+        onChangeText={setPostText}
+      />
+      <Button
+        title="Done"
+        onPress={() => {
+          // Pass params back to home screen
+          navigation.navigate("Home", { post: postText });
+        }}
+      />
+    </>
+  );
+}
+
+function HomeScreen({ navigation, route }: ScreenProps<"Home">) {
+  React.useEffect(() => {
+    if (route.params?.post) {
+      // Post updated, do something with `route.params.post`
+      // For example, send the post to the server
+    }
+  }, [route.params?.post]);
+
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Home Screen</Text>
+      <Button
+        title="Create post"
+        onPress={() => navigation.navigate("CreatePost")}
+      />
+      <Text style={{ margin: 10 }}>
+        Post:
+        {route.params?.post}
+      </Text>
       <Button
         title="Go to Details"
         onPress={() => {
@@ -83,6 +123,7 @@ export default function App() {
           options={{ title: "Overview" }}
         />
         <Stack.Screen name="Details" component={DetailsScreen} />
+        <Stack.Screen name="CreatePost" component={CreatePostScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
