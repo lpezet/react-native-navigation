@@ -1,57 +1,40 @@
 import React from "react";
-import "react-native-gesture-handler";
-import {
-  NavigationContainer,
-  NavigationContainerRef
-} from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { Button, Text, View } from "react-native";
-
-type RootStackParamList = {
-  Home: {};
-  Details: {};
-};
-
-/*
-interface ScreenProps<RouteName extends keyof RootStackParamList> {
-  navigation: StackNavigationProp<RootStackParamList, RouteName>;
-  route: RouteProp<RootStackParamList, RouteName>;
-}
-*/
-
-const Stack = createStackNavigator<RootStackParamList>();
+import { Text, View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 function HomeScreen() {
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Home Screen</Text>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Text>Home!</Text>
     </View>
   );
 }
-function DetailsScreen() {
+
+function SettingsScreen() {
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Details Screen</Text>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Text>Settings!</Text>
     </View>
+  );
+}
+
+const Tab = createBottomTabNavigator();
+
+function MyTabs() {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Settings" component={SettingsScreen} />
+    </Tab.Navigator>
   );
 }
 
 function App() {
-  const ref = React.useRef<NavigationContainerRef>(null);
-
   return (
-    <View style={{ flex: 1 }}>
-      <NavigationContainer
-        ref={ref}
-        onStateChange={state => console.log("New state is", state)}
-      >
-        <Stack.Navigator initialRouteName="Details">
-          <Stack.Screen name="Details" component={DetailsScreen} />
-          <Stack.Screen name="Home" component={HomeScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-      <Button onPress={() => ref.current?.navigate("Home")} title="Go home" />
-    </View>
+    <NavigationContainer>
+      <MyTabs />
+    </NavigationContainer>
   );
 }
 
