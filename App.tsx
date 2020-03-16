@@ -5,17 +5,15 @@ import {
   StackNavigationProp,
   createStackNavigator
 } from "@react-navigation/stack";
-import { Button, Text, TextInput, View } from "react-native";
+import { Button, Image, Text, View } from "react-native";
 
 type RootStackParamList = {
-  Home: {
-    post?: string;
+  Home: {};
+  Profile: {
+    name: string;
   };
-  Details: {
-    itemId: number;
-    otherParam?: string;
-  };
-  CreatePost: {};
+  CustomHeader: {};
+  LogoTitle: {};
 };
 
 interface ScreenProps<RouteName extends keyof RootStackParamList> {
@@ -23,89 +21,42 @@ interface ScreenProps<RouteName extends keyof RootStackParamList> {
   route: RouteProp<RootStackParamList, RouteName>;
 }
 
-function CreatePostScreen({ navigation }: ScreenProps<"CreatePost">) {
-  const [postText, setPostText] = React.useState("");
-
-  return (
-    <>
-      <TextInput
-        multiline
-        placeholder="What's on your mind?"
-        style={{ height: 200, padding: 10, backgroundColor: "white" }}
-        value={postText}
-        onChangeText={setPostText}
-      />
-      <Button
-        title="Done"
-        onPress={() => {
-          // Pass params back to home screen
-          navigation.navigate("Home", { post: postText });
-        }}
-      />
-    </>
-  );
-}
-
-function HomeScreen({ navigation, route }: ScreenProps<"Home">) {
-  React.useEffect(() => {
-    if (route.params?.post) {
-      // Post updated, do something with `route.params.post`
-      // For example, send the post to the server
-    }
-  }, [route.params?.post]);
-
+function ProfileScreen({ navigation }: ScreenProps<"Profile">) {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Button
-        title="Create post"
-        onPress={() => navigation.navigate("CreatePost")}
-      />
-      <Text style={{ margin: 10 }}>
-        Post:
-        {route.params?.post}
-      </Text>
-      <Button
-        title="Go to Details"
-        onPress={() => {
-          navigation.navigate("Details", {
-            itemId: 86,
-            otherParam: "anything you want here"
-          });
-        }}
-      />
+      <Text>Profile screen</Text>
+      <Button title="Go back" onPress={() => navigation.goBack()} />
     </View>
   );
 }
 
-function DetailsScreen({
-  route: { params },
-  navigation
-}: ScreenProps<"Details">) {
-  const { itemId } = params;
-  const { otherParam } = params;
+function CustomHeaderScreen({ navigation }: ScreenProps<"CustomHeader">) {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Details Screen</Text>
-      <Text>
-        itemId:
-        {JSON.stringify(itemId)}
-      </Text>
-      <Text>
-        otherParam:
-        {JSON.stringify(otherParam)}
-      </Text>
+      <Text>Custom Header (with a logo)</Text>
+      <Button title="Go back" onPress={() => navigation.goBack()} />
+    </View>
+  );
+}
+
+function HomeScreen({ navigation }: ScreenProps<"Home">) {
+  return (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Button
-        title="Go to Details... again"
+        title="Go to Profile"
         onPress={() => {
-          navigation.push("Details", {
-            itemId: Math.floor(Math.random() * 100)
-          });
+          navigation.navigate("Profile", { name: "Custom profile header" });
         }}
       />
-      <Button title="Go back" onPress={() => navigation.goBack()} />
       <Button
-        title="Go back to first screen in stack"
-        onPress={() => navigation.popToTop()}
+        title="Update the title"
+        onPress={() => navigation.setOptions({ title: "Updated!" })}
+      />
+      <Button
+        title="Go to CustomerHeader Screen"
+        onPress={() => {
+          navigation.navigate("CustomHeader");
+        }}
       />
     </View>
   );
@@ -113,17 +64,52 @@ function DetailsScreen({
 
 const Stack = createStackNavigator<RootStackParamList>();
 
+function LogoTitleHeader() {
+  return (
+    <Image
+      style={{ width: 50, height: 50 }}
+      source={{
+        uri:
+          "https://github.com/facebook/react-native-website/blob/master/website/static/img/tiny_logo.png?raw=true"
+      }}
+    />
+  );
+}
+
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator
+        initialRouteName="Home"
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: "#f4511e"
+          },
+          headerTintColor: "#fff",
+          headerTitleStyle: {
+            fontWeight: "bold"
+          }
+        }}
+      >
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ title: "Overview" }}
+          options={{
+            title: "My home"
+          }}
         />
-        <Stack.Screen name="Details" component={DetailsScreen} />
-        <Stack.Screen name="CreatePost" component={CreatePostScreen} />
+        <Stack.Screen
+          name="CustomHeader"
+          component={CustomHeaderScreen}
+          // not sure what type "props" would be here:
+          // headerTitle: props => <LogoTitleHeader {...props} />
+          options={{ headerTitle: () => <LogoTitleHeader /> }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={({ route }) => ({ title: route.params.name })}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
