@@ -1,12 +1,25 @@
 import React from "react";
 import { Button, Text, View } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { NavigationContainer, RouteProp } from "@react-navigation/native";
+import {
+  BottomTabNavigationProp,
+  createBottomTabNavigator
+} from "@react-navigation/bottom-tabs";
 // You can import Ionicons from @expo/vector-icons if you use Expo or
 // react-native-vector-icons/Ionicons otherwise.
 import { Ionicons } from "@expo/vector-icons";
 
-function HomeScreen({ navigation }) {
+type RootStackParamList = {
+  Home: {};
+  Settings: {};
+};
+
+interface ScreenProps<RouteName extends keyof RootStackParamList> {
+  navigation: BottomTabNavigationProp<RootStackParamList, RouteName>;
+  route: RouteProp<RootStackParamList, RouteName>;
+}
+
+function HomeScreen({ navigation }: ScreenProps<"Home">) {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>Home!</Text>
@@ -18,7 +31,7 @@ function HomeScreen({ navigation }) {
   );
 }
 
-function SettingsScreen({ navigation }) {
+function SettingsScreen({ navigation }: ScreenProps<"Settings">) {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>Settings!</Text>
